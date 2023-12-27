@@ -1,10 +1,11 @@
-package org.example.security.jwt;
+package org.example.security.config;
 
 
 import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.example.security.auth.CustomUserDetailsService;
+import org.example.security.jwt.JwtService;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;

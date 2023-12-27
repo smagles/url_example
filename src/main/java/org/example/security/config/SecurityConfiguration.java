@@ -2,7 +2,6 @@ package org.example.security.config;
 
 import lombok.RequiredArgsConstructor;
 import org.example.security.auth.CustomUserDetailsService;
-import org.example.security.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,7 +34,8 @@ public class SecurityConfiguration {
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(AntPathRequestMatcher.antMatcher("/api/v1/auth/**"))
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/api/v1/auth/**"),
+                                AntPathRequestMatcher.antMatcher("/auth/**"))
                         .permitAll()
                         .anyRequest().authenticated());
         return http.build();
