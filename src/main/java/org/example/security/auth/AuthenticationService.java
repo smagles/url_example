@@ -8,8 +8,6 @@ import org.example.security.auth.dao.LogInRequest;
 import org.example.security.auth.dao.SignUpRequest;
 import org.example.security.auth.util.AppMessages;
 import org.example.security.jwt.JwtService;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
