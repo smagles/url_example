@@ -1,21 +1,28 @@
 package org.example.security.auth;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
 import org.example.security.auth.dao.JwtAuthenticationResponse;
 import org.example.security.auth.dao.LogInRequest;
 import org.example.security.auth.dao.SignUpRequest;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
+import org.example.security.config.CookieService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/main")
 public class AuthController {
     private final AuthenticationService authenticationService;
+    private final CookieService cookieService;
 
     @GetMapping("/signup")
     public String signup(Model model) {
@@ -26,7 +33,7 @@ public class AuthController {
     @PostMapping("/signup")
     public String signup(@ModelAttribute("signupRequest") SignUpRequest signupRequest, Model model) {
         JwtAuthenticationResponse responseEntity = authenticationService.signup(signupRequest);
-        return "redirect:/auth/login";
+        return "redirect:/main/login";
     }
 
     @GetMapping("/login")
@@ -35,18 +42,20 @@ public class AuthController {
         return "login";
     }
 
+
     @PostMapping("/login")
-    public String login(@ModelAttribute("loginRequest") LogInRequest logInRequest,Model model, HttpServletResponse response) {
+    public String login(@ModelAttribute("loginRequest") LogInRequest logInRequest, Model model, HttpServletResponse response) throws IOException, URISyntaxException {
         JwtAuthenticationResponse responseEntity = authenticationService.login(logInRequest);
 
-        if (responseEntity.getToken() != null && !responseEntity.getToken().isEmpty()) {
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.add("Authorization", "Bearer " + responseEntity.getToken());
-//            HttpEntity request = new HttpEntity(headers);
-            System.out.println(responseEntity);
-            response.addHeader("Authorization", "Bearer " + responseEntity.getToken());
-        }
+        Cookie tokenCookie = cookieService.createCookie("token", responseEntity.getToken());
+        response.addCookie(tokenCookie);
 
         return "redirect:/url/main";
     }
+    @GetMapping ("/logout")
+    public String logout (){
+        SecurityContextHolder.getContext().setAuthentication(null);
+        return "redirect:main/login";
+    }
+
 }
